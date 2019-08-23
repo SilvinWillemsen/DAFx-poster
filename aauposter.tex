@@ -50,7 +50,8 @@
 \usepackage{array,booktabs}
 % For creating beautiful plots
 \usepackage{pgfplots}
-
+\usepackage[]{algorithm2e, setspace}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mathematics
 % http://en.wikibooks.org/wiki/LaTeX/Mathematics
@@ -58,11 +59,17 @@
 % Defines new environments such as equation,
 % align and split 
 \usepackage{amsmath}
+
 % Adds new math symbols
 \usepackage{amssymb}
-
+\newenvironment{rcases}
+  {\left.\begin{alignedat}{2}}
+  {\end{alignedat}\right\rbrace}
+  \DeclareMathOperator{\sgn}{sgn}
 \let\oldtext\text
 \renewcommand{\text}[1]{\oldtext{\fontfamily{ptm}\selectfont #1}}
+\let\oldbf\textbf
+\renewcommand{\textbf}[1]{\textcolor{aaublue1}{\oldbf{#1}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Colours
@@ -189,14 +196,15 @@
 }
 %the author(s)
 {\color{white}\small
-  \vspace{1em} Silvin Willemsen, Stefan Bilbao, Stefania Serafin\\[0.5em]
-  Multisensory Experience Lab, CREATE, Aalborg University Copenhagen, Denmark\\
+  \vspace{1em} Silvin Willemsen$^\oldtext{1}$, Stefan Bilbao$^\oldtext{2}$, Stefania Serafin$^\oldtext{1}$\\[0.5em]
+  $^\oldtext{1}$ Multisensory Experience Lab, CREATE, Aalborg University Copenhagen, Denmark\\
+  $^\oldtext{2}$ Acoustics and Audio Group, University of Edinburgh, UK \\
   sil@create.aau.dk
 }
 %the logo (the logo on the right)
 {
   %this can be commented out or replaced by a company/department logo
-  \includegraphics[height=0.75\headerheight]{melablogo2.png}
+  \includegraphics[height=0.75\headerheight]{melablogo.png}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,20 +213,20 @@
 
 \begin{posterbox}[name=intro,column=0,row=0]{Introduction}
 \begin{itemize}
-    \item The simulation of a bowed string is challenging due to the strongly non-linear relationship between the bow and the string.
-    \item This relationship can be described by a model of friction.
-    \item A recently popular and accurate friction model is the elasto-plastic model.
-    \item This can be applied to a string implemented with FDTD methods, which are also focused on accuracy. 
-    \item We are interested in bridging the gap between highly accurate physical models and efficient implementations. \item In this work, we present an implementation of the elasto-plastic friction model in conjunction with a finite-difference implementation of the damped stiff string. 
-    \item Furthermore, we show that it is possible to play the string in real-time using the Sensel Morph controller \cite{Sensel2019}.
+    \item The simulation of a \textbf{bowed string} is challenging due to the strongly \textbf{non-linear relationship} between the bow and the string.
+    \item This relationship can be described by a \textbf{model of friction}.
+    \item A recently popular and accurate friction model is the \textbf{elasto-plastic} model.
+    \item This can be applied to a string implemented with \textbf{FDTD methods}, which are also focused on accuracy. 
+    \item We are interested in \textbf{bridging the gap} between highly \textbf{accurate} physical models and \textbf{efficient} implementations. \item In this work, we present an implementation of the elasto-plastic friction model in conjunction with a finite-difference implementation of the damped stiff string. 
+    \item Furthermore, we show that it is possible to play the string in \textbf{real-time} using the Sensel Morph controller \cite{Sensel2019}.
 \end{itemize}
 \end{posterbox}
 
-\begin{posterbox}[name=elasto,column=0,below=intro]{Elasto-Plastic Bow Model}
+\begin{posterbox}[name=elasto,column=0,below=intro, above=bottom]{Elasto-Plastic Bow Model}
 \begin{itemize}
 
-    \item The elasto-plastic friction model assumes that the friction between objects in contact is caused by a large ensemble of bristles. 
-    \item Next to the relative velocity $v$ between the bow and the string, the average bristle displacement $z$ is introduced as a second independent variable. 
+    \item The elasto-plastic friction model assumes that the friction between objects in contact is caused by a large \textbf{ensemble of bristles} (see Fig. \ref{fig:elasto}). 
+    \item Next to the relative velocity $v$ between the bow and the string, the \textbf{average bristle displacement} $z$ is introduced as a second independent variable. 
 \end{itemize}
 \begin{center}
 \begin{tikzpicture}[scale=0.84, every node/.style={transform shape}]
@@ -372,103 +380,222 @@
     \captionsetup{singlelinecheck=off}
     \captionof{figure}[f]{%\it \fontfamily{ptm}\selectfont 
     Microscopic displacements of the bristles between the bow and the string. The bow moves right with a velocity of $v_\text{B}$.
-    \begin{enumerate}[label = \alph*)]
-        \item Initial state. The average bristle displacement $z=0$. 
-        \item The purely elastic, or presliding regime (stick).
-        \item After the break-away displacement $z_\text{ba}$, more and more bristles start to `break'. This is defined as the elasto-plastic regime. 
-        \item Steady state (slip) is reached and the purely plastic regime is entered.
+    \begin{enumerate}[labelindent=-2.4pt, label=\alph*), font=\color{black}]
+        \item \textbf{Initial} state. The average bristle displacement $z=0$.
+        \item The purely \textbf{elastic}, or presliding regime (STICK).
+        \item The \textbf{elasto-plastic} regime. 
+        \item The purely \textbf{plastic} regime (SLIP).
     \end{enumerate}
 }
     \label{fig:elasto}
     \end{center}
-    \begin{itemize}
-        \item Using the subscripts $t$ and $x$ to denote differentiation, we can write the equation for the linear damped string
-    \end{itemize}
+    \hrule
+    \vspace{0.2cm}
+    {\large \textbf{Applying to stiff string}}\\
+    % \begin{itemize}
+    %     \item 
+        Using the subscripts $t$ and $x$ to denote differentiation, we can write the equation for the bow-excited \textbf{linear damped stiff string}
+    % \end{itemize}
     \begin{equation}
-\begin{aligned}
+\begin{aligned}\label{eq:stiffString}
   u_{tt} = &\, c^2u_{xx}-\kappa^2u_{xxxx}-2\sigma_0u_t+2\sigma_1u_{txx}\\
-  &-\delta(x-x_\text{B})f(v,z)/\rho A.
+  &-\delta(x-x_\text{B})f(v,z)/\rho A
   \end{aligned}
 \end{equation}
-with force function
+% \begin{itemize}
+%     \item[] 
+with \textbf{force function}
+% \end{itemize}
+\vspace{0.1cm}
 \begin{equation}
-    f(v,z) = s_0z+s_1\dot{z}+s_2v+s_3w.
+    f(v,z) = s_0z+s_1\dot{z}+s_2v+s_3w,
+\end{equation}
+% \begin{itemize}
+    % \item[] 
+    and \textbf{relative velocity} with bowing point $x_\text{B}$ and bowing velocity $v_\text{B}$ is defined as
+% \end{itemize}
+\begin{equation}
+    v = u_t(x_\text{B})-v_\text{B}.
 \end{equation}
 
+\end{posterbox}
+
+\begin{posterbox}[name=elasto2, column=1, row=0]{Elasto-Plastic Bow Model cont.}
+The \textbf{time-derivative of $z$} is defined as $\dot{z}$ and is related to $v$ through
+\begin{equation}\label{eq:zdot}
+    \dot{z} = r(v,z) = v\left[1-\alpha(v,z)\frac{z}{z_\text{ss}(v)}\right],
+\end{equation}
+with \textbf{steady-state function} $z_\text{ss}$ (see Fig. \ref{fig:steadyState}),
+% \begin{equation}
+%     z_\text{ss}(v)=\frac{\sgn(v)}{s_0}\left[f_\text{C}+(f_\text{S}-f_\text{C})e^{-(v/v_\text{S})^2}\right]\; .
+% \end{equation}
+\begin{center}
+  \includegraphics[width=0.95\columnwidth]{steadyState.eps}
+  \captionof{figure}{A plot of the steady-state function $z_\text{ss}(v)$ with a force of 5 N.}
+  \label{fig:steadyState}
+\end{center}
+
+and the \textbf{adhesion map} between the bow and the string $\alpha(v,z)$, which is defined as (see Fig. \ref{fig:alpha})
+\vspace{-1em}
+\begin{equation}
+    \alpha(v, z) = 
+% \begin{aligned}
+    \begin{cases}
+    \begin{rcases}
+        &0 & |z| \leq z_\text{ba}\\
+       &\alpha_\text{m}&\ \, z_\text{ba}<|z|<|z_\text{ss}(v)|\\        &1 &|z|\geq|z_\text{ss}(v)|
+        \end{rcases} 
+        
+         \ \text{if} \ \ \begin{gathered}
+          \sgn(v)\\[-1ex]
+          =\\[-1.05ex]
+          \sgn(z)
+        \end{gathered}  \\[3ex]
+        \; \!0%\!\!\!\!\!\!\,
+        \qquad\qquad\qquad\; \text{if}\, \: \sgn(v)\neq\sgn(z)
+    \end{cases}
+    % \end{aligned}
+\end{equation}
+where $\alpha_m$ is the transition between the elastic and plastic behaviour.
+% and the transition between the elastic and plastic behaviour is defined as
+% \begin{align}
+%     \alpha_\text{m} &= \frac{1}{2}\big[1+\sgn(z)\sin(\Psi)\big]\\
+%     \text{where} \quad \Psi &= \pi\frac{z-\sgn(z)\frac{1}{2}(|z_\text{ss}(v)|+z_\text{ba})}{|z_\text{ss}(v)|-z_\text{ba}}\nonumber\, .
+%     \end{align}
     \begin{center}
-  \includegraphics[width=0.9\columnwidth]{drawAlpha3.eps}
+  \includegraphics[width=0.95\columnwidth]{drawAlpha3.eps}
   \captionof{figure}{A plot of the adhesion map $\alpha(v,z)$ plotted against $z$ when the signs of $v$ and $z$ are the same. The different regions of the map are shown with the coloured areas and correspond to Fig. \ref{fig:elasto} according to: yellow - a) \& b), orange - c) and red - d).}
   \label{fig:alpha}
 \end{center}
 \end{posterbox}
 
+% \begin{posterbox}[name=equation,column=0,below=elasto2]{Equations}
+% Here is an example of an equation
+% \begin{equation}
+% \begin{aligned}
+%   u_{tt} = &\, c^2u_{xx}-\kappa^2u_{xxxx}-2\sigma_0u_t+2\sigma_1u_{txx}\\
+%   &-\delta(x-x_\text{B})f(v,z)/\rho A.
+%   \end{aligned}
+% \end{equation}
+% with force function
+% \begin{equation}
+%     f(v,z) = s_0z+s_1\dot{z}+s_2v+s_3w
+% \end{equation}
+% \end{posterbox}
+% \begin{posterbox}[name=parameters,column=1,below=elasto2,above=bottom]{Parameter values}
+% \begin{center}
+%   \captionof{table}{Parameter values used for the simulation.}
+% 	\centering
+%   \begin{tabular}{c|c|c}
+%     Parameter & Symb. & Value\\ \hline
+%     Material Density &$\rho$ & $7850$ \\
+%     Radius & $r$ & $5\cdot10^{-4}$\\
+%     String length & $L$ & $1$ \\
+%     Wave speed & $c$ & $2 f_0/L$\\
+%     Young's modulus & $E$ & $2\cdot 10^{11}$\\
+%     Freq. ind. damping & $\sigma_0$ & $1$\\
+%     Freq. dep. damping & $\sigma_1$ & $5 \cdot 10^{-3}$\\
+%     Coulomb friction & $\mu_\text{C}$ & $0.3$ \\
+%     Static friction & $\mu_\text{S}$ & $0.8$ \\
+%     Normal force & $f_\text{N}$ & $10$ \\
+%     Bow velocity & $v_\text{B}$ & $0.1$ \\
+%     Bow position & $x_\text{B}$ & $0.25$ \\
+%     Stribeck velocity & $v_\text{S}$ & $0.1$ \\
+%     Bristle stiffness & $s_0$ & $10^4$ \\
+%     Bristle damping & $s_1$& $0.001\sqrt{s_0}$ \\
+%     Viscous friction & $s_2$ & $0.4$ \\
+%     Noise coefficient & $s_3$ & $0.02f_\text{N}$\\
+%     Pseudorand. func. & $w$ & $-1<w<1$\\
+%     Break-away disp.& $z_\text{ba}$ & $0.7 f_\text{C}/s_0$ \\
+%     Sample rate & $f_\text{s}$ & $44,100$ \\
+%     Time step & $k$ & $1/f_\text{s}$ \\
+%     %NR threshold & $\phi$ (-) & $10^{-7}$ \\
+%  \end{tabular}
+% 	%
+%   \label{tab:parameters}
+% \end{center}
+% \end{posterbox}
 
-\begin{posterbox}[name=equation,column=0,below=elasto]{Equations}
-Here is an example of an equation
-\begin{equation}
-\begin{aligned}
-  u_{tt} = &\, c^2u_{xx}-\kappa^2u_{xxxx}-2\sigma_0u_t+2\sigma_1u_{txx}\\
-  &-\delta(x-x_\text{B})f(v,z)/\rho A.
-  \end{aligned}
+\begin{posterbox}[name=discretisation, column=1, below=elasto2,above=bottom]{Discretisation}
+% \begin{itemize}
+%     \item 
+    At the bowing point we need to iteratively solve for relative velocity $v^n$ and average bristle displacement $z^n$ at sample $n$ using \textbf{multivariate Newton-Raphson}.
+    % \item
+    We can rewrite \eqref{eq:stiffString} (in discrete-time) to
+    % \end{itemize}
+    \vspace{-0.3em}
+    \begin{equation}
+    \begin{aligned}
+        g_1(v^n, z^n) = \, &\frac{s_0z^n+s_1r^n+s_2v^n+s_3w^n}{\rho A h}
+    \\&+\Big(\frac{2}{k} + 2\sigma_0 \Big)v^n
+    + b^n= 0,
+    \end{aligned}\vspace{-0.2em}
+    \end{equation}
+    where $b^n$ is not dependent on $v^n$ and $z^n$ and can be pre-computed. Furthermore, using the \textbf{discrete counterpart of \eqref{eq:zdot}} and defining $a^n$ as the \textbf{bilinear transform of $z$}, we define
+    \vspace{-0.3em}\begin{equation}
+        g_2(v^n, z^n) = r^n - a^n ,
+        \vspace{-0.3em}
+    \end{equation}
+    and obtain the following iteration
+    \begin{equation}\label{eq:NRit}
+    \begin{bmatrix}
+    v_{(i+1)}^n\\
+    z_{(i+1)}^n
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    v_{(i)}^n\\
+    z_{(i)}^n
+    \end{bmatrix}
+    -
+    \begin{bmatrix}
+    \frac{\partial g_1}{\partial v} & \frac{\partial g_1}{\partial z}\\
+    \frac{\partial g_2}{\partial v} & \frac{\partial g_2}{\partial z}\\
+    \end{bmatrix}^{-1}
+    \begin{bmatrix}
+    g_1\\
+    g_2
+    \end{bmatrix}
+    ,
 \end{equation}
-with force function
-\begin{equation}
-    f(v,z) = s_0z+s_1\dot{z}+s_2v+s_3w
-\end{equation}
+where $i$ is the iteration number capped by 50 iterations, and the convergence threshold is set to $10^{-7}$.
+
 \end{posterbox}
 
-\begin{posterbox}[name=implementation,column=1,row=0]{Implementation}
+\begin{posterbox}[name=implementation,column=2,row=0]{Implementation}
 
 \begin{itemize}
-    \item The real-time implementation has been done using C++ and the JUCE framework \cite{JUCE}.
+    \item The real-time implementation has been done using \textbf{C++} and the \textbf{JUCE} framework \cite{JUCE}.
 \end{itemize}
 \begin{center}
-    \includegraphics[width=0.95\columnwidth]{systemArch.pdf}
-    \captionof{figure}{The system architecture. Black arrows indicate instructions and hollow arrows indicate data flows. Arrows are accompanied by coloured boxes depicting what thread they are associated with.}
+    \includegraphics[width=1.0\columnwidth]{systemArchitecture.pdf}
+    \captionof{figure}{The system architecture. Black arrows indicate instructions and hollow arrows indicate data flows. %Arrows are accompanied by coloured boxes depicting what thread they are associated with.
+    }
     \label{fig:systemArch}
 \end{center}
 \begin{itemize}
-    \item The three main components of the application are:
+    \item The three main \textbf{components} of the application are:
     \begin{itemize}
-        \item the Sensel for controlling the application,
-        \item the violin string class that performs the simulation, and
-        \item the main application class that moderates between these and the auditory and visual outputs.
+        \item the \textbf{Sensel} for controlling the application,
+        \item the \textbf{violin string class} that performs the simulation, and
+        \item the \textbf{main application class} that moderates between these and the auditory and visual outputs.
     \end{itemize}
     \item The three main threads running are (color in Fig. \ref{fig:systemArch}, frequency):
     \begin{itemize}
-        \item the Graphics thread (green, 15 Hz)
-        \item the Sensel thread (blue, 150 Hz)
-        \item the Audio thread (orange, 44,100 Hz)
+        \item the \textbf{Graphics} thread (green, 15 Hz)
+        \item the \textbf{Sensel} thread (blue, 150 Hz)
+        \item the \textbf{Audio} thread (orange, 44,100 Hz)
     \end{itemize}
 \end{itemize}
 \end{posterbox}
 
-\begin{posterbox}[name=figures,column=1,below=implementation,above=bottom]{Figures and Tables}
-You cannot use floats in the baposter template. However, you can use figure captions by using {\tt \textbackslash captionof} instead of {\tt \textbackslash caption}. This is demonstrated in Fig.~\ref{fig:figlabel}. Moreover, you can also use {\tt \textbackslash label} and {\tt \textbackslash ref} to make references to your figures and/or tables.
-\begin{center}
-  \includegraphics{AAUgraphics/aau_logo_new}
-  \captionof{figure}{Here is a figure caption}
-  \label{fig:figlabel}
-\end{center}
-As you can see, the text background is not white. If your figures do not have a transparent background, this may look too ugly for you. You can of course change the background colour through the {\tt boxColorOne} option. 
-\begin{center}
-  \begin{tabular}{c c c}
-    \toprule
-    header 1 & header 2 & header 3\\
-    \midrule
-    data (1,1) & data (1,2) & data (1,3)\\
-    data (2,1) & data (2,2) & data (2,3)\\
-    data (3,1) & data (3,2) & data (3,3)\\
-    \bottomrule
-  \end{tabular}
-  \captionof{table}{A very simple table with booktabs}
-  \label{tab:tablabel}
-\end{center}
-\end{posterbox}
-
-\begin{posterbox}[name=discussion,column=2,row=0]{Results and Discussion}
+\begin{posterbox}[name=discussion,column=2,below=implementation]{Results and Discussion}
+\begin{itemize}
+    \item The algorithm was tested with different numbers of strings according to the violin tuning of empty strings. 
+\end{itemize}
+\vspace{-1.6em}
   \begin{center}
-  \captionof{table}{CPU usage for different amounts of strings. The values are averages over a 10 s period both for the enabled and disabled graphics thread. All strings are bowed simultaneously (polyphonically).}
+  \captionof{table}{Average CPU usage for different amounts of strings. All strings are bowed simultaneously (polyphonically).}
 	\centering
   \begin{tabular}{|c|c|c|}\hline
    
@@ -487,8 +614,8 @@ As you can see, the text background is not white. If your figures do not have a 
 
 \begin{posterbox}[name=conclusion,column=2,below=discussion]{Conclusion}
   \begin{itemize}
-    \item With a single string we are able to keep the CPU usage down to $<6\%$.
-    \item This implementation could thus easily be used in parallel with other virtual instruments or plugins.
+    \item With a single string we are able to keep the \textbf{CPU usage under 6$\mathbf{\%}$}.
+    % \item This implementation could thus easily be used in parallel with other virtual instruments or plugins.
     \item Future work includes parameter design and including an instrument body for a more realistic sound. 
   \end{itemize}
 \end{posterbox}
