@@ -1,13 +1,9 @@
 \begin{thebibliography}{1}
 
-\bibitem{Sensel2019}
-Sensel Inc.,
-\newblock ``{Sensel Morph},''
-\newblock Available at https://sensel.com/, accessed April 01, 2019.
-
-\bibitem{JUCE}
-JUCE ROLI,
-\newblock ``{JUCE},''
-\newblock Available at https://juce.com/.
+\bibitem{Dupont2002}
+P.~Dupont, V.~Hayward, B.~Armstrong, and F.~Altpeter,
+\newblock ``Single state elastoplastic friction models,''
+\newblock {\em IEEE Transactions on Automatic Control}, vol. 47, no. 5, pp.
+  787--792, 2002.
 
 \end{thebibliography}

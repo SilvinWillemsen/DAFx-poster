@@ -215,10 +215,10 @@
 \begin{itemize}
     \item The simulation of a \textbf{bowed string} is challenging due to the strongly \textbf{non-linear relationship} between the bow and the string.
     \item This relationship can be described by a \textbf{model of friction}.
-    \item A recently popular and accurate friction model is the \textbf{elasto-plastic} model.
+    \item A recently popular and accurate friction model is the \textbf{elasto-plastic} model \cite{Dupont2002}.
     \item This can be applied to a string implemented with \textbf{FDTD methods}, which are also focused on accuracy. 
     \item We are interested in \textbf{bridging the gap} between highly \textbf{accurate} physical models and \textbf{efficient} implementations. \item In this work, we present an implementation of the elasto-plastic friction model in conjunction with a finite-difference implementation of the damped stiff string. 
-    \item Furthermore, we show that it is possible to play the string in \textbf{real-time} using the Sensel Morph controller \cite{Sensel2019}.
+    \item Furthermore, we show that it is possible to play the string in \textbf{real-time} using the Sensel Morph controller.
 \end{itemize}
 \end{posterbox}
 
@@ -566,7 +566,7 @@ where $i$ is the iteration number capped by 50 iterations, and the convergence t
 \begin{posterbox}[name=implementation,column=2,row=0]{Implementation}
 
 \begin{itemize}
-    \item The real-time implementation has been done using \textbf{C++} and the \textbf{JUCE} framework \cite{JUCE}.
+    \item The real-time implementation has been done using \textbf{C++} and the \textbf{JUCE} framework.
 \end{itemize}
 \begin{center}
     \includegraphics[width=1.0\columnwidth]{systemArchitecture.pdf}
@@ -592,7 +592,7 @@ where $i$ is the iteration number capped by 50 iterations, and the convergence t
 
 \begin{posterbox}[name=discussion,column=2,below=implementation]{Results and Discussion}
 \begin{itemize}
-    \item The algorithm was tested with different numbers of strings according to the violin tuning of empty strings. 
+    \item The algorithm was tested on a MacBook Pro (Intel Core i7, 2.2GHz) with different numbers of strings according to the violin tuning of empty strings. 
 \end{itemize}
 \vspace{-1.6em}
   \begin{center}
