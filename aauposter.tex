@@ -214,9 +214,9 @@
 \begin{posterbox}[name=intro,column=0,row=0]{Introduction}
 \begin{itemize}
     \item The simulation of a \textbf{bowed string} is challenging due to the strongly \textbf{non-linear relationship} between the bow and the string.
-    \item This relationship can be described by a \textbf{model of friction}.
-    \item A recently popular and accurate friction model is the \textbf{elasto-plastic} model \cite{Dupont2002}.
-    \item This can be applied to a string implemented with \textbf{FDTD methods}, which are also focused on accuracy. 
+    \item This relationship can be described by a \textbf{friction model}.
+    \item An accurate friction model is the \textbf{elasto-plastic} model \cite{Dupont2002}.
+    \item The model can be applied to a string implemented with \textbf{FDTD methods}, to focus on accuracy. 
     \item We are interested in \textbf{bridging the gap} between highly \textbf{accurate} physical models and \textbf{efficient} implementations. \item In this work, we present an implementation of the elasto-plastic friction model in conjunction with a finite-difference implementation of the damped stiff string. 
     \item Furthermore, we show that it is possible to play the string in \textbf{real-time} using the Sensel Morph controller.
 \end{itemize}
@@ -391,10 +391,10 @@
     \end{center}
     \hrule
     \vspace{0.2cm}
-    {\large \textbf{Applying to stiff string}}\\
+    {\large \textbf{Application to stiff string}}\\
     % \begin{itemize}
     %     \item 
-        Using the subscripts $t$ and $x$ to denote differentiation, we can write the equation for the bow-excited \textbf{linear damped stiff string}
+        Using the subscripts $t$ and $x$ to denote differentiation, we can write the equation for the \textbf{linear damped stiff string} excited by the bow
     % \end{itemize}
     \begin{equation}
 \begin{aligned}\label{eq:stiffString}
@@ -566,7 +566,7 @@ where $i$ is the iteration number capped by 50 iterations, and the convergence t
 \begin{posterbox}[name=implementation,column=2,row=0]{Implementation}
 
 \begin{itemize}
-    \item The real-time implementation has been done using \textbf{C++} and the \textbf{JUCE} framework.
+    \item The real-time implementation has been performed using \textbf{C++} and the \textbf{JUCE} framework.
 \end{itemize}
 \begin{center}
     \includegraphics[width=1.0\columnwidth]{systemArchitecture.pdf}
